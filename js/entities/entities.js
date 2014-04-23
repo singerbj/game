@@ -39,8 +39,8 @@ update: function(dt) {
         this.flipX(false);
         // update the entity velocity
         this.vel.x += this.accel.x * me.timer.tick;
-    }
-    else
+    
+    }else
     {
         this.vel.x = 0;
     }
@@ -56,7 +56,15 @@ update: function(dt) {
         }
     }
  
- 
+    if (me.input.isKeyPressed('shot')) {
+	// Create a new laser object
+	var myShot = me.pool.pull("ShotEntity", this.pos.x, this.pos.y, { image: "bullet", spritewidth: 16, spriteheight: 16 }, false);
+	// Add the laser to the game manager with z value 3
+	me.game.world.addChild(myShot, 3);
+
+	console.log("shot added to the world!")
+
+    } 
     // check & update player movement
     this.updateMovement();
  
@@ -97,13 +105,51 @@ update: function(dt) {
 });
 
 /*----------------
+ a Shot entity
+------------------------ */
+game.ShotEntity = me.CollectableEntity.extend({
+    // extending the init function is not mandatory
+    // unless you need to add some extra initialization
+    init: function(x, y, settings, left) {
+	
+	// call the parent constructor
+        this.parent(x, y, settings);
+
+	// set the walking & jumping speed
+        this.setVelocity(5, 20);
+		
+    },
+ 
+    // this function is called by the engine, when
+    // an object is touched by something (here collected)
+    onCollision : function () {
+		// do something when there is collision
+		console.log("Hit!") 
+		// make sure it cannot be collected "again"
+		this.collidable = false;
+		// remove it
+		me.game.world.removeChild(this);
+	},
+
+update: function(dt) {
+ 	this.flipX(this.left);
+        this.vel.x += (this.left)? - this.accel.x * me.timer.tick : this.accel.x * me.timer.tick;
+        this.updateMovement();
+        return true;    
+}
+
+ 
+});
+
+/*----------------
  a Coin entity
 ------------------------ */
 game.CoinEntity = me.CollectableEntity.extend({
     // extending the init function is not mandatory
     // unless you need to add some extra initialization
     init: function(x, y, settings) {
-        // call the parent constructor
+           
+	// call the parent constructor
         this.parent(x, y, settings);
     },
  

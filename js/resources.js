@@ -52,6 +52,9 @@ game.resources = [
 
 		// game font
 		{name: "32x32_font",          type:"image", src: "data/img/font/32x32_font.png"},
+	
+		// bullet entity
+		{name: "bullet",  type:"image", src: "data/img/sprite/spinning_coin_gold.png"},
 	/* 
 	* Maps. 
 	*/
