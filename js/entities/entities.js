@@ -58,12 +58,10 @@ update: function(dt) {
  
     if (me.input.isKeyPressed('shot')) {
 	// Create a new laser object
+	console.log("person location: " + this.pos.x + ", " + this.pos.y)
 	var myShot = me.pool.pull("ShotEntity", this.pos.x, this.pos.y, { image: "bullet", spritewidth: 16, spriteheight: 16 }, false);
 	// Add the laser to the game manager with z value 3
 	me.game.world.addChild(myShot, 3);
-
-	console.log("shot added to the world!")
-
     } 
     // check & update player movement
     this.updateMovement();
@@ -107,22 +105,26 @@ update: function(dt) {
 /*----------------
  a Shot entity
 ------------------------ */
-game.ShotEntity = me.CollectableEntity.extend({
+game.ShotEntity = me.ObjectEntity.extend({
     // extending the init function is not mandatory
     // unless you need to add some extra initialization
     init: function(x, y, settings, left) {
-	
+
 	// call the parent constructor
         this.parent(x, y, settings);
-
-	// set the walking & jumping speed
-        this.setVelocity(5, 20);
+	
+	this.pos.x = x;
+	this.pos.y = y;
+	
+	this.left = left;	
+	this.collidable = true;
+	console.log("shot created");
 		
     },
  
     // this function is called by the engine, when
     // an object is touched by something (here collected)
-    onCollision : function () {
+    	onCollision : function () {
 		// do something when there is collision
 		console.log("Hit!") 
 		// make sure it cannot be collected "again"
@@ -131,14 +133,14 @@ game.ShotEntity = me.CollectableEntity.extend({
 		me.game.world.removeChild(this);
 	},
 
-update: function(dt) {
- 	this.flipX(this.left);
-        this.vel.x += (this.left)? - this.accel.x * me.timer.tick : this.accel.x * me.timer.tick;
-        this.updateMovement();
-        return true;    
-}
-
- 
+	update: function() {
+		console.log("update function called") 
+	
+		this.flipX(this.left);
+		this.vel.x += (this.left)? - this.accel.x * me.timer.tick : this.accel.x * me.timer.tick;
+		this.updateMovement();
+		return true;    
+	}
 });
 
 /*----------------
