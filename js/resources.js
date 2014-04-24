@@ -39,6 +39,7 @@ game.resources = [
 		
 		// the main player spritesheet
 		{name: "gripe_run_right", type:"image", src: "data/img/sprite/gripe_run_right.png"},
+		{name: "gripe_run_right2", type:"image", src: "data/img/sprite/gripe_run_right2.png"},
 		
 		// the parallax background
 		{name: "area01_bkg0",         type:"image", src: "data/img/area01_bkg0.png"},
