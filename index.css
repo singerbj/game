@@ -19,7 +19,8 @@ body {
 
 #screen canvas {
 	margin: auto;
-	max-height: 600px;
+	
+	/*max-height: 600px;*/
 	/* Hide the gap for font descenders. */
 	display: block;
 	
@@ -30,4 +31,13 @@ body {
 	image-rendering: -webkit-optimize-contrast;
 	image-rendering: optimize-contrast;
 	-ms-interpolation-mode: nearest-neighbor;
+}
+
+#title{
+	position: absolute;
+	top: 100px;
+	left: 0px;
+	width: 100%;
+	text-align: center;
+
 }
