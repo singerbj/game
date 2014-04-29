@@ -10,6 +10,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
     ------ */
     lastShot: 0,
     faceLeft: true,
+	lives: 3,
     init: function(x, y, settings) {
         // call the constructor
         this.parent(x, y, settings);
@@ -22,14 +23,19 @@ game.PlayerEntity = me.ObjectEntity.extend({
 	 
         this.flipX(true);
         this.vel.x -= this.accel.x * me.timer.tick;
+		this.type = me.game.ENEMY_OBJECT;
     },
  
     /* -----
 update the player pos
 ------ */
 update: function(dt) {
- 
-    if (me.input.isKeyPressed('left'))
+	if (this.lives == 0){
+		me.game.world.removeChild(this);
+		me.game.repaint.defer();
+	}
+    
+	if (me.input.isKeyPressed('left'))
     {
         // flip the sprite on horizontal axis
         this.flipX(true);
@@ -72,26 +78,17 @@ update: function(dt) {
     this.updateMovement();
  
     // check for collision
-    var res = me.game.world.collide(this);
+   /* var res = me.game.world.collide(this);
  
     if (res) {
         // if we collide with an enemy
         if (res.obj.type == me.game.ENEMY_OBJECT) {
-            // check if we jumped on it
-            if ((res.y > 0) && ! this.jumping) {
-                // bounce (force jump)
-                this.falling = false;
-                this.vel.y = -this.maxVel.y * me.timer.tick;
-                // set the jumping flag
-                this.jumping = true;
- 
-            } else {
-                // let's flicker in case we touched an enemy
-                this.renderable.flicker(750);
-            }
+			this.lives--;
+			this.pos.x = 50; 
+			this.pos.y = 50;
         }
     }
- 
+ */
     // update animation if necessary
     if (this.vel.x!=0 || this.vel.y!=0) {
         // update object animation
@@ -121,7 +118,8 @@ game.PlayerEntity2 = me.ObjectEntity.extend({
 	
     lastShot: 0,
     faceLeft: false,
- 
+	lives: 3,
+
     init: function(x, y, settings) {
         // call the constructor
         this.parent(x, y, settings);
@@ -131,6 +129,8 @@ game.PlayerEntity2 = me.ObjectEntity.extend({
  
         // set the display to follow our position on both axis
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
+
+		this.type = me.game.ENEMY_OBJECT;
  
     },
  
@@ -138,7 +138,11 @@ game.PlayerEntity2 = me.ObjectEntity.extend({
 update the player pos
 ------ */
 update: function(dt) {
- 	
+	if (this.lives == 0){
+		me.game.world.removeChild(this);
+		me.game.repaint.defer();
+	}
+
     if (me.input.isKeyPressed('left2'))
     {
         // flip the sprite on horizontal axis
@@ -152,7 +156,6 @@ update: function(dt) {
         // unflip the sprite
         this.flipX(false);
 	this.faceLeft = false;
-	console.log(this.faceLeft);
         // update the entity velocity
         this.vel.x += this.accel.x * me.timer.tick;
     
@@ -175,36 +178,28 @@ update: function(dt) {
  
 
     if (me.input.isKeyPressed('shot2') && (me.timer.getTime() - this.lastShot > 700)) {
-	this.lastShot = me.timer.getTime();
-	// Create a new laser object
-	var myShot = me.pool.pull("ShotEntity", this.pos.x, this.pos.y, { image: "bullet", width: 32, height: 32 }, this.faceLeft);
-	// Add the laser to the game manager with z value 3
-	me.game.world.addChild(myShot, 99);
+		this.lastShot = me.timer.getTime();
+		// Create a new laser object
+		var myShot = me.pool.pull("ShotEntity", this.pos.x, this.pos.y, { image: "bullet", width: 32, height: 32 }, this.faceLeft);
+		// Add the laser to the game manager with z value 3
+		me.game.world.addChild(myShot, 99);
     } 
     // check & update player movement
     this.updateMovement();
  
     // check for collision
-    var res = me.game.world.collide(this);
+    /*var res = me.game.world.collide(this);
  
     if (res) {
         // if we collide with an enemy
         if (res.obj.type == me.game.ENEMY_OBJECT) {
-            // check if we jumped on it
-            if ((res.y > 0) && ! this.jumping) {
-                // bounce (force jump)
-                this.falling = false;
-                this.vel.y = -this.maxVel.y * me.timer.tick;
-                // set the jumping flag
-                this.jumping = true;
- 
-            } else {
-                // let's flicker in case we touched an enemy
-                this.renderable.flicker(750);
-            }
+			// let's flicker in case we touched an enemy
+			this.lives--;
+			this.pos.x = 50;
+			this.pos.y = 50;
         }
     }
- 
+ */
     // update animation if necessary
     if (this.vel.x!=0 || this.vel.y!=0) {
         // update object animation
@@ -229,26 +224,26 @@ game.ShotEntity = me.ObjectEntity.extend({
     // extending the init function is not mandatory
     // unless you need to add some extra initialization
     init: function(x, y, settings, left) {
-	
-	settings.spritewidth = 32;
-	settings.spriteheight = 32;
-	// call the parent constructor
-        this.parent(x, y, settings);
-		
-	if(!left){
-		this.pos.x = x + 28;
-		this.vel.x = 13;
-	} else {
-		this.pos.x = x - 28;
-		this.vel.x = -13;
-	}
-	this.pos.y = y + 20;
-	this.gravity = 0;	
+		settings.spritewidth = 32;
+		settings.spriteheight = 32;
+		// call the parent constructor
+			this.parent(x, y, settings);
+			
+		if(!left){
+			this.pos.x = x + 28;
+			this.vel.x = 13;
+		} else {
+			this.pos.x = x - 28;
+			this.vel.x = -13;
+		}
+		this.pos.y = y + 20;
+		this.gravity = 0;
+		this.type = me.game.ENEMY_OBJECT;
     },
  
     // this function is called by the engine, when
     // an object is touched by something (here collected)
-    	onCollision : function () {
+    onCollision : function () {
 		// do something when there is collision
 		console.log("Hit!") 
 		// remove it
@@ -260,7 +255,17 @@ game.ShotEntity = me.ObjectEntity.extend({
 		//this.renderable.flipX(this.left);
 		//this.vel.x += (this.left)? - this.accel.x * me.timer.tick : this.accel.x * me.timer.tick;
 		this.updateMovement();
-			
+		var res = me.game.world.collide(this);
+ 
+		if (res) {
+			// if we collide with an enemy
+			if (res.obj.type == me.game.ENEMY_OBJECT) {
+				res.obj.lives--;
+				res.obj.pos.x = 50;
+				res.obj.pos.y = 50;
+			}
+		}
+
 		// update animation if necessary
 		if (this.vel.x==0) {
 			me.game.world.removeChild(this);
