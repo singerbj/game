@@ -15,7 +15,7 @@ game.PlayerEntity = me.ObjectEntity.extend({
         this.parent(x, y, settings);
  
         // set the default horizontal & vertical speed (accel vector)
-        this.setVelocity(3, 15);
+        this.setVelocity(3, 20);
  
         // set the display to follow our position on both axis
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
@@ -127,7 +127,7 @@ game.PlayerEntity2 = me.ObjectEntity.extend({
         this.parent(x, y, settings);
  
         // set the default horizontal & vertical speed (accel vector)
-        this.setVelocity(3, 15);
+        this.setVelocity(3, 20);
  
         // set the display to follow our position on both axis
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
@@ -253,6 +253,7 @@ game.ShotEntity = me.ObjectEntity.extend({
 		console.log("Hit!") 
 		// remove it
 		me.game.world.removeChild(this);
+		me.game.repaint.defer();
 	},
 
 	update: function(dt) {
@@ -261,13 +262,11 @@ game.ShotEntity = me.ObjectEntity.extend({
 		this.updateMovement();
 			
 		// update animation if necessary
-		if (this.vel.x!=0) {
-			// update object animation
-			this.parent(dt);
-			return true;
+		if (this.vel.x==0) {
+			me.game.world.removeChild(this);
+			me.game.repaint.defer();
 		}
 			
-		me.game.world.removeChild(this);
 		return true;    
 	}
 });
