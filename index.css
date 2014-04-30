@@ -32,7 +32,7 @@ body {
 	image-rendering: optimize-contrast;
 	-ms-interpolation-mode: nearest-neighbor;
     -webkit-animation-name:             rotate; 
-    -webkit-animation-duration:         0.5s; 
+    -webkit-animation-duration:         10s; 
     -webkit-animation-iteration-count:  infinite;
     -webkit-animation-timing-function: linear;}
 }
