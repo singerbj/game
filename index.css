@@ -31,6 +31,10 @@ body {
 	image-rendering: -webkit-optimize-contrast;
 	image-rendering: optimize-contrast;
 	-ms-interpolation-mode: nearest-neighbor;
+    -webkit-animation-name:             rotate; 
+    -webkit-animation-duration:         0.5s; 
+    -webkit-animation-iteration-count:  infinite;
+    -webkit-animation-timing-function: linear;}
 }
 
 #title{
@@ -41,3 +45,13 @@ body {
 	text-align: center;
 
 }
+
+@-webkit-keyframes rotate {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to { 
+    -webkit-transform: rotate(360deg);
+  }
+}
+
