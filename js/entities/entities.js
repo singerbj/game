@@ -264,7 +264,7 @@ game.ShotEntity = me.ObjectEntity.extend({
 				res.obj.pos.x = 50;
 				res.obj.pos.y = 50;
 			  
-			  if (res.obj.name == "mainplayer1"){
+			  if (res.obj.name == "mainplayer"){
 			    document.getElementById("p1lives").innerHTML="" + res.obj.lives;
         } else if (res.obj.name == "mainplayer2"){
 			    document.getElementById("p2lives").innerHTML="" + res.obj.lives;
