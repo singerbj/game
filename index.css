@@ -19,8 +19,8 @@ body {
 
 #screen canvas {
 	margin: auto;
-	width: 775px;
-	/*max-height: 600px;*/
+	width: auto;
+	height: 100%;
 	/* Hide the gap for font descenders. */
 	display: block;
 	
