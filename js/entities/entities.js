@@ -70,7 +70,7 @@ update: function(dt) {
     if (me.input.isKeyPressed('shot') && (me.timer.getTime() - this.lastShot > 700)) {
 	this.lastShot = me.timer.getTime();
 	// Create a new laser object
-	var myShot = me.pool.pull("ShotEntity", this.pos.x, this.pos.y, { image: "bullet", width: 32, height: 32 }, this.faceLeft);
+	var myShot = me.pool.pull("ShotEntity", this.pos.x, this.pos.y, { image: "bullet", width: 32, height: 32 }, this.faceLeft, this.name);
 	// Add the laser to the game manager with z value 3
 	me.game.world.addChild(myShot, 99);
     } 
@@ -180,7 +180,7 @@ update: function(dt) {
     if (me.input.isKeyPressed('shot2') && (me.timer.getTime() - this.lastShot > 700)) {
 		this.lastShot = me.timer.getTime();
 		// Create a new laser object
-		var myShot = me.pool.pull("ShotEntity", this.pos.x, this.pos.y, { image: "bullet", width: 32, height: 32 }, this.faceLeft);
+		var myShot = me.pool.pull("ShotEntity", this.pos.x, this.pos.y, { image: "bullet", width: 32, height: 32 }, this.faceLeft, this.name);
 		// Add the laser to the game manager with z value 3
 		me.game.world.addChild(myShot, 99);
     } 
@@ -221,11 +221,15 @@ update: function(dt) {
  a Shot entity
 ------------------------ */
 game.ShotEntity = me.ObjectEntity.extend({
+    
+    shotBy: "",
     // extending the init function is not mandatory
-    // unless you need to add some extra initialization
-    init: function(x, y, settings, left) {
+    // unless you need to add some extra initialization 
+    init: function(x, y, settings, left, sB) {
 		settings.spritewidth = 32;
 		settings.spriteheight = 32;
+		settings.name = "shot";
+		this.shotBy = sB;
 		// call the parent constructor
 			this.parent(x, y, settings);
 			
@@ -241,16 +245,6 @@ game.ShotEntity = me.ObjectEntity.extend({
 		this.type = me.game.ENEMY_OBJECT;
     },
  
-    // this function is called by the engine, when
-    // an object is touched by something (here collected)
-    onCollision : function () {
-		// do something when there is collision
-		console.log("Hit!") 
-		// remove it
-		me.game.world.removeChild(this);
-		me.game.repaint.defer();
-	},
-
 	update: function(dt) {
 		//this.renderable.flipX(this.left);
 		//this.vel.x += (this.left)? - this.accel.x * me.timer.tick : this.accel.x * me.timer.tick;
@@ -260,20 +254,47 @@ game.ShotEntity = me.ObjectEntity.extend({
 		if (res) {
 			// if we collide with an enemy
 			if (res.obj.type == me.game.ENEMY_OBJECT) {
-				res.obj.lives--;
-				res.obj.pos.x = 50;
-				res.obj.pos.y = 50;
-			  
+				
+			  if(res.obj.name != this.shotBy && res.obj.name != "shot"){
+          res.obj.lives--;
+          var otherPlayer;
+          if (res.obj.name == "mainPlayer"){
+            otherPlayer = me.game.world.getChildByProp("name", "mainPlayer")[0];
+          } else {
+            otherPlayer = me.game.world.getChildByProp("name", "mainPlayer")[1];
+          }
+          console.log(otherPlayer.name + ": " + otherPlayer.pos.x + ", " + otherPlayer.pos.y)
+
+          if (otherPlayer.pos.x < 865) {
+            if(otherPlayer.pos.y < 470){
+              res.obj.pos.x = 1550;
+              res.obj.pos.y = 750;
+            } else {
+              res.obj.pos.x = 1650;
+              res.obj.pos.y = 50;
+            }  
+          } else {
+            if(otherPlayer.pos.y < 470){
+              res.obj.pos.x = 150;
+              res.obj.pos.y = 750;
+            } else {
+              res.obj.pos.x = 50;
+              res.obj.pos.y = 50;
+            }  
+          }
+        }
+
 			  if (res.obj.name == "mainplayer"){
 			    document.getElementById("p1lives").innerHTML="Player 1 Lives: " + res.obj.lives;
         } else if (res.obj.name == "mainplayer2"){
 			    document.getElementById("p2lives").innerHTML="Player 2 Lives: " + res.obj.lives;
-        } else {
-          //do nothing
-        }
-
-        
+        } else if (res.obj.name == "shot") {
+			    me.game.world.removeChild(this);
+			    me.game.world.removeChild(res.obj);
+			    me.game.repaint.defer();
+        }  
 			}
+			
 		}
 
 		// update animation if necessary
